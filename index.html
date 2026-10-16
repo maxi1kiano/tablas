@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tablas del 1 al 10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;700&display=swap">
+<style>
+/* Layout: una hoja de cuaderno cuadriculado centrada; selector de tablas arriba, renglones de cuentas, barra de corrección abajo */
+:root {
+  --paper: #f7f9fc;
+  --grid: #dbe4f0;
+  --margin: #e8a0a8;
+  --ink: #1f3a6b;
+  --ink-soft: #5b6f92;
+  --accent: #2f6fe0;
+  --accent-ink: #ffffff;
+  --ok: #1f8a4c;
+  --ok-bg: #e2f4ea;
+  --bad: #c2362f;
+  --bad-bg: #fbe5e3;
+  --field: #ffffff;
+  --display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #17241f; --grid: #22342d; --margin: #8a4a52;
+    --ink: #e9f0ea; --ink-soft: #9fb4a8; --accent: #f2c94c; --accent-ink: #1b1b1b;
+    --ok: #6fd69a; --ok-bg: #1d3a2a; --bad: #ff8a80; --bad-bg: #3d2224; --field: #1d2d27;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #17241f; --grid: #22342d; --margin: #8a4a52;
+  --ink: #e9f0ea; --ink-soft: #9fb4a8; --accent: #f2c94c; --accent-ink: #1b1b1b;
+  --ok: #6fd69a; --ok-bg: #1d3a2a; --bad: #ff8a80; --bad-bg: #3d2224; --field: #1d2d27;
+  color-scheme: dark;
+}
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+}
+.wrap { max-width: 520px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 48px; display: flex; flex-direction: column; gap: 20px; }
+header { display: flex; flex-direction: column; gap: 4px; }
+.eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-soft); font-weight: 700; }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(2.2rem, 9vw, 3.2rem); line-height: 1; margin: 0; text-wrap: balance; }
+h1 .num { color: var(--accent); }
+.picker { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; }
+.picker button {
+  font-family: var(--display); font-weight: 700; font-size: 1.05rem;
+  aspect-ratio: 1; min-width: 0; border-radius: 8px; border: 2px solid var(--ink-soft);
+  background: var(--field); color: var(--ink); cursor: pointer; padding: 0;
+}
+.picker button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.picker button:focus-visible, .btn:focus-visible, input:focus-visible, .toggle input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+.sheet { border-left: 3px solid var(--margin); padding-left: 14px; display: flex; flex-direction: column; gap: 8px; }
+.row {
+  display: grid; grid-template-columns: 1fr auto 1.5rem; align-items: center; gap: 10px;
+  font-family: var(--display); font-size: 1.6rem; font-weight: 600; font-variant-numeric: tabular-nums;
+  padding: 2px 8px; border-radius: 8px;
+}
+.row .eq { white-space: nowrap; }
+.row .eq b { color: var(--accent); font-weight: 800; }
+.row input {
+  width: 4.5ch; font: inherit; font-weight: 800; text-align: center; color: var(--ink);
+  background: var(--field); border: 2px solid var(--ink-soft); border-radius: 8px; padding: 2px 4px;
+}
+.row .mark { font-size: 1.2rem; text-align: center; }
+.row.ok { background: var(--ok-bg); }
+.row.ok input { border-color: var(--ok); color: var(--ok); }
+.row.ok .mark { color: var(--ok); }
+.row.bad { background: var(--bad-bg); }
+.row.bad input { border-color: var(--bad); color: var(--bad); }
+.row.bad .mark { color: var(--bad); }
+.fix { grid-column: 1 / -1; font-family: var(--body); font-size: .85rem; color: var(--bad); font-weight: 700; margin-top: -4px; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn {
+  font-family: var(--display); font-weight: 700; font-size: 1.1rem; padding: 10px 18px; border-radius: 10px; cursor: pointer;
+  border: 2px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+}
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--ink-soft); }
+.toggle { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--ink-soft); cursor: pointer; margin-left: auto; }
+.toggle input { width: 18px; height: 18px; accent-color: var(--accent); }
+.score {
+  font-family: var(--display); font-size: 1.3rem; font-weight: 700; padding: 10px 14px; border-radius: 10px;
+  background: var(--field); border: 2px dashed var(--ink-soft);
+}
+.score.perfect { border-color: var(--ok); color: var(--ok); border-style: solid; }
+@media (prefers-reduced-motion: no-preference) {
+  .row { transition: background-color .2s; }
+  .score:not([hidden]) { animation: pop .3s ease-out; }
+  @keyframes pop { from { transform: scale(.96); } to { transform: none; } }
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <span class="eyebrow">Practicá multiplicar</span>
+    <h1>Tabla del <span class="num" id="tnum">7</span></h1>
+  </header>
+
+  <div class="picker" id="picker" role="group" aria-label="Elegir tabla"></div>
+
+  <form id="form" class="sheet" autocomplete="off" novalidate></form>
+
+  <div class="controls">
+    <button class="btn" type="submit" form="form" id="check">Corregir</button>
+    <button class="btn ghost" type="button" id="random">Otra tabla al azar</button>
+    <label class="toggle"><input type="checkbox" id="shuffle"><span>Mezclar orden</span></label>
+  </div>
+
+  <div class="score" id="score" hidden aria-live="polite"></div>
+</main>
+
+<script>
+const picker = document.getElementById('picker');
+const form = document.getElementById('form');
+const tnum = document.getElementById('tnum');
+const score = document.getElementById('score');
+const shuffle = document.getElementById('shuffle');
+let table = 1, order = [];
+
+for (let n = 1; n <= 10; n++) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = n; b.dataset.n = n;
+  b.setAttribute('aria-label', 'Tabla del ' + n);
+  b.addEventListener('click', () => load(n));
+  picker.appendChild(b);
+}
+
+function mix(a) {
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+function load(n) {
+  table = n;
+  tnum.textContent = n;
+  score.hidden = true;
+  picker.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.n === n)));
+  order = [1,2,3,4,5,6,7,8,9,10];
+  if (shuffle.checked) mix(order);
+  form.innerHTML = '';
+  order.forEach((k, i) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML =
+      `<label class="eq" for="a${i}"><b>${n}</b> × ${k} =</label>` +
+      `<input id="a${i}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" data-k="${k}" aria-label="${n} por ${k}">` +
+      `<span class="mark" aria-hidden="true"></span>`;
+    form.appendChild(row);
+  });
+  const first = form.querySelector('input');
+  if (first && matchMedia('(hover: hover)').matches) first.focus();
+}
+
+form.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || e.target.tagName !== 'INPUT') return;
+  e.preventDefault();
+  const inputs = [...form.querySelectorAll('input')];
+  const next = inputs[inputs.indexOf(e.target) + 1];
+  if (next) next.focus(); else check();
+});
+
+form.addEventListener('input', e => {
+  if (e.target.tagName !== 'INPUT') return;
+  e.target.value = e.target.value.replace(/\D/g, '');
+  const row = e.target.closest('.row');
+  row.classList.remove('ok', 'bad');
+  row.querySelector('.mark').textContent = '';
+  row.querySelector('.fix')?.remove();
+});
+
+form.addEventListener('submit', e => { e.preventDefault(); check(); });
+
+function check() {
+  let good = 0, answered = 0;
+  form.querySelectorAll('.row').forEach(row => {
+    const inp = row.querySelector('input');
+    const k = +inp.dataset.k, right = table * k;
+    row.classList.remove('ok', 'bad');
+    row.querySelector('.fix')?.remove();
+    const mark = row.querySelector('.mark');
+    if (inp.value === '') { mark.textContent = ''; return; }
+    answered++;
+    if (+inp.value === right) { good++; row.classList.add('ok'); mark.textContent = '✓'; }
+    else {
+      row.classList.add('bad'); mark.textContent = '✗';
+      const fix = document.createElement('div');
+      fix.className = 'fix'; fix.textContent = `Era ${right}`;
+      row.appendChild(fix);
+    }
+  });
+  score.hidden = false;
+  score.classList.toggle('perfect', good === 10);
+  const blank = 10 - answered;
+  score.textContent = good === 10
+    ? `¡Perfecto! 10 de 10 en la tabla del ${table}.`
+    : `${good} de 10 correctas` + (blank ? ` · ${blank} sin responder` : '') + '.';
+}
+
+document.getElementById('random').addEventListener('click', () => {
+  let n; do { n = 1 + Math.floor(Math.random() * 10); } while (n === table);
+  load(n);
+});
+shuffle.addEventListener('change', () => load(table));
+
+load(1 + Math.floor(Math.random() * 10));
+</script>
+</body>
+</html>
